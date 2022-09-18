@@ -187,7 +187,6 @@ func handleDownload(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDetail(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*") // allow cors *
 
 	if err := r.ParseForm(); err != nil {
@@ -231,6 +230,7 @@ func handleDetail(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(res)
 	} else {
 		// return a file
