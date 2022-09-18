@@ -23,8 +23,15 @@ func main() {
 	http.HandleFunc("/download", handleDownload)
 	http.HandleFunc("/detail", handleDetail)
 
-	fmt.Println("server started at localhost:9000")
-	http.ListenAndServe(":9000", nil)
+	var port string
+	if os.Getenv("PORT") != "" {
+		port= os.Getenv("PORT")
+	}else{
+		port = "9000"
+	}
+
+	fmt.Println("server started at port: "+port)
+	http.ListenAndServe(":"+port, nil)
 }
 
 func routeIndexGet(w http.ResponseWriter, r *http.Request) {
