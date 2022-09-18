@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Input Message</title>
+  </head>
+  <body>
+    <form method="post" action="/process" enctype="multipart/form-data">
+      <label>The file :</label>
+      <input type="file" name="file" required /><br />
+
+      <label>Rename to :</label>
+      <input type="text" name="alias" /><br />
+
+      <button type="submmit">Submit</button>
+    </form>
+
+    <h3>Download</h3>
+    <ul id="list-files-download"></ul>
+
+    <h3>Detail</h3>
+    <ul id="list-files-detail"></ul>
+
+    <script>
+      function Yo() {
+        var self = this;
+        var $ul_download = document.getElementById("list-files-download");
+        var $ul_detail = document.getElementById("list-files-detail");
+
+        var renderData = function (res) {
+          res.forEach(function (each) {
+            var $li_download = document.createElement("li");
+            var $a_download = document.createElement("a");
+            var $li_detail = document.createElement("li");
+            var $a_detail = document.createElement("a");
+            var $button_detail_base64 = document.createElement("button");
+
+            $li_download.innerText = "download ";
+            $li_download.appendChild($a_download);
+            $ul_download.appendChild($li_download);
+            $li_detail.innerText = "detail ";
+            $li_detail.appendChild($a_detail);
+            $li_detail.appendChild($button_detail_base64);
+            $ul_detail.appendChild($li_detail);
+
+            $a_download.href = "/download?path=" + encodeURI(each.path);
+            $a_download.innerText = each.filename;
+            $a_download.target = "_blank";
+            $a_detail.href = "/detail?path=" + encodeURI(each.path);
+            $a_detail.innerText = each.filename;
+            $a_detail.target = "_blank";
+            $button_detail_base64.onclick = function (_) {
+              fetch(
+                "/detail?path=" +
+                  encodeURI(each.path) +
+                  "&response_type=base64",
+                { method: "GET" }
+              )
+                .then((resp) => resp.json())
+                .then((data) => {
+                  alert("Success, base64 printed in console!");
+                  console.log(data);
+                })
+                .catch((err) => console.log(err));
+            };
+            $button_detail_base64.innerText = each.filename + "(base64)";
+            $button_detail_base64.style = "margin-left: 10px;";
+          });
+        };
+
+        var getAllListFiles = function () {
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", "/list-files");
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              var json = JSON.parse(xhr.responseText);
+              renderData(json);
+            }
+          };
+          xhr.send();
+        };
+
+        self.init = function () {
+          getAllListFiles();
+        };
+      }
+
+      window.onload = function () {
+        new Yo().init();
+      };
+    </script>
+  </body>
+</html>

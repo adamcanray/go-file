@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  go-file:
+    image: sailor1921/go-file:${SERVICE_TAG_VERSION}
+    restart: always
+    ports:
+      - 9001:9000
