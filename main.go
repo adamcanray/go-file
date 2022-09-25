@@ -25,12 +25,12 @@ func main() {
 
 	var port string
 	if os.Getenv("PORT") != "" {
-		port= os.Getenv("PORT")
-	}else{
+		port = os.Getenv("PORT")
+	} else {
 		port = "9000"
 	}
 
-	fmt.Println("server started at port: "+port)
+	fmt.Println("server started at port: " + port)
 	http.ListenAndServe(":"+port, nil)
 }
 
@@ -190,8 +190,7 @@ func handleDetail(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*") // allow cors *
 
 	if err := r.ParseForm(); err != nil {
-		fmt.Println("asds")
-
+		fmt.Println("error")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -209,17 +208,19 @@ func handleDetail(w http.ResponseWriter, r *http.Request) {
 
 		var base64Encoding string
 
-		// // Determine the content type of the image file
-		// mimeType := http.DetectContentType(bytes)
+		// Determine the content type of the image file
+		mimeType := http.DetectContentType(bytes)
 
-		// // Prepend the appropriate URI scheme header depending
-		// // on the MIME type
-		// switch mimeType {
-		// case "image/jpeg":
-		// 	base64Encoding += "data:image/jpeg;base64,"
-		// case "image/png":
-		// 	base64Encoding += "data:image/png;base64,"
-		// }
+		fmt.Println(mimeType)
+
+		// Prepend the appropriate URI scheme header depending
+		// on the MIME type
+		switch mimeType {
+		case "image/jpeg":
+			base64Encoding += "data:image/jpeg;base64,"
+		case "image/png":
+			base64Encoding += "data:image/png;base64,"
+		}
 
 		// Append the base64 encoded output
 		base64Encoding += toBase64(bytes)
